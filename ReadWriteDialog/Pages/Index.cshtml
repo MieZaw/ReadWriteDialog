@@ -1,0 +1,66 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<h2>Read and Write File</h2>
+
+<input type="file" id="fileInput" style="display: none;" />
+<button id="selectButton" class="btn btn-primary">Select File</button>
+<br />
+<br />
+<textarea id="fileContent" rows="10" cols="50" placeholder="File Content"></textarea>
+<br />
+<br />
+<button id="writeButton" class="btn btn-primary" style="display: none;">Write</button>
+
+@section Scripts {
+    <script>
+        document.getElementById("selectButton").addEventListener("click", function () {
+            document.getElementById("fileInput").click();
+        });
+
+        document.getElementById("fileInput").addEventListener("change", function () {
+            var fileInput = document.getElementById("fileInput").files[0];
+            if (fileInput) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById("fileContent").value = e.target.result;
+                    document.getElementById("writeButton").style.display = "block";
+                };
+
+                reader.readAsText(fileInput);
+            }
+        });
+
+        document.getElementById("writeButton").addEventListener("click", function () {
+            var fileContent = document.getElementById("fileContent").value;
+            var fileName = "myfile.txt";
+
+            // Create a Blob object with the file content
+            var blob = new Blob([fileContent], { type: "text/plain" });
+
+            // Create a temporary URL for the Blob object
+            var url = URL.createObjectURL(blob);
+
+            // Create a link element and set its attributes
+            var link = document.createElement("a");
+            link.href = url;
+            link.download = fileName;
+
+            // Append the link to the document body and trigger the click event
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up the temporary URL
+            URL.revokeObjectURL(url);
+        });
+    </script>
+}
